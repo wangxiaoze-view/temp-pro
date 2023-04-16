@@ -11,7 +11,7 @@
     "url": "git+https://github.com/wangxiaoze-view/temp-pro.git"
   },
   "bin": {
-    "wxz-temp-cli": "bin/temp-pro.js"
+    "temp-pro": "bin/temp-pro.js"
   },
   "keywords": [
     "cli",
