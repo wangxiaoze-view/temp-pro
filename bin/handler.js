@@ -11,7 +11,7 @@ const { inquirerConfig, gitConfig } = require("./inquirer");
 
 const spinner = ora("正在下载项目模板, 请稍等...");
 
-const LOGO = "TEMP_PRO";
+const LOGO = "TEMPPRO";
 
 
 const removeDirectory = (url) => {
@@ -87,24 +87,23 @@ const downloadProject = (url, checkout, name, answers) => {
             return spinner.fail(chalk.red.bold(error.message));
         }
 
-        if (stdout.length) {
-        } else {
-            removeDirectory(`${name}/.git`);
-            spinner.succeed(chalk.green.bold("项目模板初始化完成..."));
-            const fileName = `${name}/package.json`;
-            const meta = {
-                name,
-                description: answers.description,
-                author: answers.author,
-            };
-            if (fs.existsSync(fileName)) {
-                const content = fs.readFileSync(fileName).toString();
-                const result = handlebars.compile(content)(meta);
-                fs.writeFileSync(fileName, result);
-            }
-            handlerLogo(name);
+        // removeDirectory(`${name}/.git`);
+        spinner.succeed(chalk.green.bold("项目模板初始化完成..."));
+        const fileName = `${name}/package.json`;
+        const meta = {
+            name,
+            description: answers.description,
+            author: answers.author,
+        };
+        if (fs.existsSync(fileName)) {
+            const content = fs.readFileSync(fileName).toString();
+            const result = handlebars.compile(content)(meta);
+            fs.writeFileSync(fileName, result);
         }
+        handlerLogo(name);
     })
+
+
 };
 
 /**

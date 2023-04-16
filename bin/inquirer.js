@@ -7,10 +7,10 @@ const gitConfig = [
     {
         name: "H5(vue3 + vant + abk公司内部使用)",
         url: "http://gitlab.dev.anbangke.com/frontend/abk-temp-cli.git",
-        checkout: 'pc-admin-template'
+        checkout: 'h5-template'
     },
     {
-        name: "Nest(Node + MySql + 个人使用)",
+        name: "Node(Nest + MySql + 个人使用)",
         url: "https://gitee.com/wang-xiaoze/nest-api-admin.git",
         checkout: 'master'
     },
