@@ -2,7 +2,6 @@ const chalk = require("chalk");
 const fs = require("fs");
 const path = require('path')
 
-const symbols = require("log-symbols");
 const inquirer = require("inquirer");
 const ora = require("ora");
 const figlet = require("figlet");
@@ -44,48 +43,31 @@ exports.handlerHelp = handlerHelp;
 /**
  * @description 检测文件名是否存在
  * @param {String} name
- * @param {Function} callback
  * @returns
  */
 const isExistFileName = name => {
-    if (!name) {
-         console.log(
-            symbols.error,
-            chalk.red.bold(`\nError: 请输入项目名称!\n`)
-        );
-        process.exit(1);
-    };
+    if (!name) return
     if (!fs.existsSync(name)) {
         handlerInquirer(name);
     } else {
-        console.log(
-            symbols.error,
-            chalk.red.bold(`\nError: 项目【${name}】已存在，请更改项目名称!\n`)
-        );
-        process.exit(1);
+        spinner.fail(chalk.red.bold(`Error: 项目【${name}】已存在，请更改项目名称!`))
     }
 };
 
 /**
  * @description 提供用户界面和查询会话流程
  * @param {String} name
- * @param {String} url
  */
 const handlerInquirer = name => {
     inquirer.prompt(inquirerConfig).then(answers => {
-        spinner.start();
+        spinner.info(chalk.green.bold(`正在下载项目模板, 请稍等...`));
 
         const { keywords = "" } = answers;
-
         const findGit = gitConfig.find(git => git.name === keywords) || {};
-
         if (findGit.url !== "" && findGit.checkout !== "") {
-            // 根据git地址下载文件
             downloadProject(findGit.url, findGit.checkout, name, answers);
         } else {
-            spinner.fail();
-            console.log(symbols.error, chalk.red.bold(`\nError: 模板地址不存在!\n`));
-            process.exit(1);
+            spinner.fail(chalk.red.bold(`Error: 模板地址不存在!`));
         }
     });
 };
@@ -101,16 +83,14 @@ const downloadProject = (url, checkout, name, answers) => {
 
     child_process.exec(`git clone -b ${checkout} ${url} ${name}`, (error, stdout) => {
         if (error) {
-            spinner.fail();
-            console.log(symbols.error, chalk.red(error.message));
             removeDirectory(name);
-            process.exit(1);
+            return spinner.fail(chalk.red.bold(error.message));
         }
 
         if (stdout.length) {
         } else {
             removeDirectory(`${name}/.git`);
-            spinner.succeed();
+            spinner.succeed(chalk.green.bold("项目模板初始化完成..."));
             const fileName = `${name}/package.json`;
             const meta = {
                 name,
@@ -122,7 +102,6 @@ const downloadProject = (url, checkout, name, answers) => {
                 const result = handlebars.compile(content)(meta);
                 fs.writeFileSync(fileName, result);
             }
-            console.log(symbols.success, chalk.green("项目模板初始化完成..."));
             handlerLogo(name);
         }
     })
